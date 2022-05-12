@@ -3,7 +3,7 @@ import datetime
 import json
 
 
-app = Flask(__name__) #создание сервера Фласк
+app = Flask(__name__)
 
 DB_FILE = "./data/db.json"
 db = open(DB_FILE, "rb")
@@ -11,20 +11,20 @@ data = json.load(db)
 messages = data["messages"]
 print(len(messages))
 
-def save_messages_to_file():    # сохранение сообений в файл
-    db = open(DB_FILE, "w")     # открытие бд
+def save_messages_to_file():
+    db = open(DB_FILE, "w")
     data = {
         "messages" : messages
-    }   # создание новой бд
-    json.dump(data, db) # перезапись бд
-def add_message(text, sender):  # Объявим функцию, которая добавит сообщение в список
-    now = datetime.datetime.now()  # импорт объекта даты сейчас
+    }
+    json.dump(data, db)
+def add_message(text, sender):
+    now = datetime.datetime.now()
     new_message = {
         "text": text,
         "sender": sender,
         "time": now.strftime("%H:%M")
     }
-    messages.append(new_message)  # Добавляем новое сообщение в список
+    messages.append(new_message)
     save_messages_to_file()
 
 def check_numbers_of_messages():
@@ -33,24 +33,21 @@ def check_numbers_of_messages():
     else:
         return
 
-def print_message(message):  # Объявляем функцию, которая будет печатать одно сообщение
+def print_message(message):
     print(f"[{message['sender']}]: {message['text']} / {message['time']} ")
 
 
-for message in messages:    # цикл для перебора сообщений внутри списка сообщений
+for message in messages:
     print_message(message)
 
-#main page
-@app.route("/") #ровно над предыдущей строчки сущности, к которой это относится. это аннотация
-def index_page():
-    return "helo, chel!"
+
 
 #формат джейсон
 @app.route("/get_messages")
 def get_messages():
     return {'messages': messages}
 
-@app.route("/form")
+@app.route("/")
 def form():
     return render_template("form.html")
 
@@ -72,5 +69,5 @@ def clear_data():
     messages.clear()
     return "messages are clear"
 
-app.run()
+app.run(host="0.0.0.0", port=80)
 
